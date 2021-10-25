@@ -1,0 +1,128 @@
+ NON ADMIN:
+ 
+ 1. Get By Roll:  
+
+ 		SELECT transactions.ID AS ID, transactions.STUDENT_ID, transactions.COMP_ID AS COMPONENT_ID, catalogue.NAME, transactions.ISSUE_DATE, transactions.RETURN_DATE from ((transactions JOIN component on component.COMP_ID=transactions.COMP_ID) JOIN catalogue on catalogue.CAT_ID=component.CAT_ID) WHERE transactions.STUDENT_ID = {STUDENT ID}
+ 
+ 		// returns
+ 			List of components
+
+ ------------------------------------------------------------------------------
+
+ 2. Check for Components availability: 
+
+ 		->To get total count of components
+
+ 			SELECT cat.count as TOTAL from catalogue as cat where cat.CAT_ID = {CAT ID}
+
+ 		->To get components that are being used
+
+ 			SELECT COUNT(*) as RESERVED from ((transactions JOIN component on component.COMP_ID=transactions.COMP_ID) JOIN catalogue on catalogue.CAT_ID=component.CAT_ID) WHERE catalogue.CAT_ID = {CAT ID}
+
+ 		// returns
+ 			1 - if the component is present
+ 			0 - if the component is not present
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+
+ADMIN:
+
+ 1. Lend a component: (Add a transaction)
+
+ 		INSERT INTO transactions(STUDENT_ID, Comp_id, Return_date) VALUES({STUDENT ID},{COMP ID},{RETURN DATE})
+
+ 		// returns
+ 			1 - success
+ 			0 - not successful
+
+----------------------------------------------------------------------------------
+
+
+ 2. Add a component to inventory:
+
+ 		//Increment the total count of the component in catalogue table
+
+ 			UPDATE catalogue SET catalogue.COUNT = catalogue.COUNT+1 WHERE catalogue.CAT_ID = {CAT ID};
+
+ 		//Add a new record in component table
+
+ 			INSERT INTO component(comp_id, CAT_ID) VALUES({COMP ID},{CAT ID});
+
+
+ 		// returns
+ 			1 - success
+ 			0 - not successful
+
+ ----------------------------------------------------------------------------------
+
+
+ 3. Delete a component from inventory:
+
+ 		//Decrement the total count of the component in catalogue table
+
+ 			UPDATE catalogue SET catalogue.COUNT = catalogue.COUNT-1 WHERE catalogue.CAT_ID = {CAT ID};
+
+ 		//Delete a record in component table
+
+ 			DELETE FROM component WHERE component.COMP_ID = {COMP ID} AND component.CAT_ID = {CAT ID}; 
+
+
+ 		// returns
+ 			1 - success
+ 			0 - not successful
+
+-----------------------------------------------------------------------------------
+
+
+ 4. Update the return date:
+
+ 		UPDATE transactions SET transactions.RETURN_DATE = {DATE} WHERE transactions.COMP_ID = {COMP ID}
+
+ 		// returns
+ 			1 - success
+ 			0 - not successful
+
+----------------------------------------------------------------------------------
+
+ 5. Add a new category of component:
+ 
+ 		//Add a new record in catalogue table with total_count value of 0
+ 			INSERT INTO catalogue(CAT_ID, NAME) VALUES({CAT ID},{NAME OF THE CATEGORY})
+
+ 		// returns
+ 			1 - success
+ 			0 - not successful
+
+----------------------------------------------------------------------------------
+
+ 6. Delete a category of component:
+
+        DELETE FROM catalogue WHERE CAT_ID = {CAT ID}
+
+        // returns
+            1 - success
+            0 - not successful
+
+----------------------------------------------------------------------------------
+
+ 7. Add a new Admin user:
+
+ 		//Add a new record in authentication table
+ 			INSERT INTO authentication(authentication.USER_ID, authentication.PASSWORD) VALUES({USER ID},{PASSWORD})
+
+ 		// returns
+ 			1 - success
+ 			0 - not successful
+
+----------------------------------------------------------------------------------
+ 
+ 8. Login Admin:
+
+        SELECT COUNT(*) AS admin FROM authentication WHERE USER_ID = {USER ID} AND PASSWORD = {PASSWORD}
+
+        // returns
+            1 - success
+            0 - not successful
+
